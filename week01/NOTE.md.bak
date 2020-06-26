@@ -62,12 +62,6 @@ for movie in movies:
     item['releasetime'] = releasetime.split("：")[-1]
     print(name,url)
     yield scrapy.Request(url=url, meta={'item': item}, callback=self.parse2)
-    
-    
-# get() 、getall() 是新版本的方法，extract() 、extract_first()是旧版本的方法。
-# 前者更好用，取不到就返回None，后者取不到就raise一个错误。
-# 对于scrapy.selector.unified.SelectorList对象，getall()==extract(),get()==extract_first()
-# 对于scrapy.selector.unified.Selector对象，getall()==extract(),get()!=extract_first()
             
 scrapy相关设置：
 settings.py      

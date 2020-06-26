@@ -18,9 +18,9 @@ class MaoyanSpider(scrapy.Spider):
         for movie in movies:
             print ("-----------------------------------")
             item = MytestItem()
-            name = movie.xpath('./a/@title').extract_first().strip()
-            url = "https://maoyan.com" + movie.xpath('./a/@href').extract_first().strip()
-            releasetime = movies.xpath('./div/div/div[1]/p[3]/text()').extract_first().strip()
+            name = movie.xpath('./a/@title').get().strip()
+            url = "https://maoyan.com" + movie.xpath('./a/@href').get().strip()
+            releasetime = movies.xpath('./div/div/div[1]/p[3]/text()').get().strip()
             item['name'] = name
             item['url'] = url
             item['releasetime'] = releasetime.split("：")[-1]
@@ -29,7 +29,7 @@ class MaoyanSpider(scrapy.Spider):
 
     def parse2(self, response):
         item = response.meta['item']
-        film_type = Selector(response=response).xpath('/html/body/div[3]/div/div[2]/div[1]/ul/li[1]/a/text()').extract()
+        film_type = Selector(response=response).xpath('/html/body/div[3]/div/div[2]/div[1]/ul/li[1]/a/text()').getall()
         for i in range(0,len(film_type)):
             film_type[i] = film_type[i].strip()
         item['film_type'] = " ".join(film_type)
