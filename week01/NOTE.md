@@ -49,7 +49,7 @@ allowd_domains 限制爬虫域名范围
 start_urls 启动后第一次发起的http请求
 
 # 使用scrapy的模块分析html
-from scrapy
+from scrapy.selector import Selector
 movies = Selector(response=response).xpath('//dd')
 for movie in movies:
     print ("-----------------------------------")
