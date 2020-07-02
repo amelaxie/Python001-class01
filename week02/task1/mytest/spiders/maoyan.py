@@ -13,10 +13,11 @@ class MaoyanSpider(scrapy.Spider):
 
 
     def start_requests(self):
+        import  os
         yield scrapy.Request(url="https://maoyan.com/board", callback=self.parse)
 
     def parse(self, response):
-        print(response.text)
+        #print(response.text)
         movies = Selector(response=response).xpath('//dd')
         for movie in movies:
             print ("-----------------------------------")
@@ -31,6 +32,7 @@ class MaoyanSpider(scrapy.Spider):
             yield scrapy.Request(url=url, meta={'item': item}, callback=self.parse2)
 
     def parse2(self, response):
+        #print(response.text)
         item = response.meta['item']
         film_type = Selector(response=response).xpath('/html/body/div[3]/div/div[2]/div[1]/ul/li[1]/a/text()').getall()
         for i in range(0,len(film_type)):

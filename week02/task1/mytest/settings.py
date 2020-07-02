@@ -14,7 +14,6 @@ BOT_NAME = 'mytest'
 SPIDER_MODULES = ['mytest.spiders']
 NEWSPIDER_MODULE = 'mytest.spiders'
 
-
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'mytest (+http://www.yourdomain.com)'
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36"
@@ -61,7 +60,8 @@ DOWNLOAD_DELAY = 1
 #}
 DOWNLOADER_MIDDLEWARES = {
     'mytest.middlewares.RandomHttpProxyMiddleware': 1,
-    'mytest.middlewares.MytestDownloaderMiddleware': 2,
+    #  "mytest.middlewares.ProxyMiddleware" :2,
+    'mytest.middlewares.MytestDownloaderMiddleware': 3,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 400,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None
 }
@@ -78,10 +78,17 @@ ITEM_PIPELINES = {
     "mytest.pipelines.MySQLPipeline": 280
 }
 
-HTTP_PROXY_LIST = [
-     '122.51.139.61:18231'
-]
+# HTTP_PROXY_LIST = [
+#      '122.51.139.61:18231'
+# ]
+HTTPPROXY_ENABLED = True
 
+HTTP_PROXY_LIST = [
+    'http://122.51.139.61:18231',
+    'http://122.51.139.61:18231',
+    'https://122.51.139.61:18231',
+    'https://122.51.139.61:18231'
+]
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

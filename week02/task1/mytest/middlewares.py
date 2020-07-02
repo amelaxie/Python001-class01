@@ -12,6 +12,49 @@ from collections import defaultdict
 from urllib.parse import urlparse
 import random
 import base64
+from scrapy.utils.httpobj import urlparse_cached
+from scrapy.utils.python import to_bytes
+# from urllib.request import getproxies, proxy_bypass, _parse_proxy
+from urllib.parse import unquote, urlunparse
+
+
+# Start your middleware class
+class ProxyMiddleware(object):
+    # overwrite process request
+    def __init__(self, auth_encoding='utf-8', proxy_list = None):
+        print  (proxy_list)
+        self.proxies = defaultdict(list)
+        for proxy in proxy_list:
+            parse = urlparse(proxy)
+            self.proxies[parse.scheme].append(proxy)
+
+    def process_request(self, request, spider):
+        print("in--------------------- proxy down")
+        print(request.url)
+        print (request.meta)
+        if request.url.find("http:") != -1:
+            request.meta['proxy'] = "http://122.51.139.61:18231"
+        else:
+            request.meta['proxy'] = "https://122.51.139.61:18231"
+        #request.meta['proxy'] = "https://122.51.139.61:18231"
+  
+        # Use the following lines if your proxy requires authentication
+        #proxy_user_pass = "USERNAME:PASSWORD"
+        # setup basic authentication for the proxy
+        #encoded_user_pass = base64.encodestring(proxy_user_pass)
+        #request.headers['Proxy-Authorization'] = 'Basic ' + encoded_user_pass
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        if not crawler.settings.getbool('HTTPPROXY_ENABLED'):
+            raise NotConfigured
+        if not crawler.settings.get('HTTP_PROXY_LIST'):
+            raise NotConfigured
+        http_proxy_list = crawler.settings.get('HTTP_PROXY_LIST')  
+        auth_encoding = crawler.settings.get('HTTPPROXY_AUTH_ENCODING', 'utf-8')
+
+        return cls(auth_encoding, http_proxy_list)
+
 
 class MytestSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
@@ -60,60 +103,32 @@ class MytestSpiderMiddleware:
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
 
+ 
 
 class RandomHttpProxyMiddleware(HttpProxyMiddleware):
 
-    # def __init__(self, auth_encoding='utf-8', proxy_list = None):
-    #     print ("in-------------------------------1")
-    #     try:
-    #         self.proxies = defaultdict(list)
-    #         for proxy in proxy_list:
-    #             parse = urlparse(proxy)
-    #             self.proxies[parse.scheme].append(proxy)
-    #     except Exception as e:
-    #         print(e)
+    def __init__(self, auth_encoding='utf-8', proxy_list = None):
+        print  (proxy_list)
+        self.proxies = defaultdict(list)
+        for proxy in proxy_list:
+            parse = urlparse(proxy)
+            self.proxies[parse.scheme].append(proxy)
+        #print (self.proxies)
 
-    def process_request(self,request,spider):
-        if request.url.startswith("http://"):
-            request.meta['proxy']="http://"+'122.51.139.61:18231'          # http代理
-        elif request.url.startswith("https://"):
-            request.meta['proxy']="https://"+'122.51.139.61:18231'         # https代理
+    @classmethod
+    def from_crawler(cls, crawler):
+        if not crawler.settings.getbool('HTTPPROXY_ENABLED'):
+            raise NotConfigured
+        if not crawler.settings.get('HTTP_PROXY_LIST'):
+            raise NotConfigured
+        http_proxy_list = crawler.settings.get('HTTP_PROXY_LIST')  
+        auth_encoding = crawler.settings.get('HTTPPROXY_AUTH_ENCODING', 'utf-8')
 
-    # @classmethod
-    # def from_crawler(cls, crawler):
-    #     try:
-    #         if not crawler.settings.get('HTTP_PROXY_LIST'):
-    #             raise NotConfigured
+        return cls(auth_encoding, http_proxy_list)
 
-    #         http_proxy_list = crawler.settings.get('HTTP_PROXY_LIST')  
-    #         auth_encoding = crawler.settings.get('HTTPPROXY_AUTH_ENCODING', 'utf-8')
-    #     except Exception as e:
-    #         print(e)
-    #     return cls(auth_encoding, http_proxy_list)
-
-    # def _set_proxy(self, request, scheme):
-    #     try:
-    #         print("in-------------------------------1")
-    #         proxy = random.choice(self.proxies[scheme])
-    #         #request.meta['proxy'] = proxy
-    #         request.meta['proxy'] = 'https://122.51.139.61:18231'
-    #     except Exception as e:
-    #         print(e)
-
-        #proxy_user_pass = "newbie:pE5-Xtv#fS5McU6I"
-        # setup basic authentication for the proxy
-        #encoded_user_pass = base64.b64encode(proxy_user_pass)
-        #request.headers['Proxy-Authorization'] = 'Basic ' + encoded_user_pass
-        #user = crawler.settings.get('HTTP_PROXY_USER')
-        #passwd = crawler.settings.get('HTTP_PROXY_PASSWD')
-        #if not user or not passwd:
-        #    raise NotConfigured
-        # http_proxy_list = crawler.settings.get('HTTP_PROXY_LIST')  
-        #user = "newbie"
-        #passwd = "pE5-Xtv#fS5McU6I"
-        #creds = self._basic_auth_header(user, passwd)
-        #request.headers['Proxy-Authorization'] = b'Basic ' + creds
-
+    def _set_proxy(self, request, scheme):
+        proxy = random.choice(self.proxies[scheme])
+        request.meta['proxy'] = proxy
 
 
 class MytestDownloaderMiddleware:
@@ -131,7 +146,7 @@ class MytestDownloaderMiddleware:
     def process_request(self, request, spider):
         # Called for each request that goes through the downloader
         # middleware.
-        print ("in-------------------------------2")
+        print ("in------------------------------- mydown")
         # Must either:
         # - return None: continue processing this request
         # - or return a Response object
