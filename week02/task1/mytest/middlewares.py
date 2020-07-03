@@ -14,19 +14,18 @@ import random
 import base64
 from scrapy.utils.httpobj import urlparse_cached
 from scrapy.utils.python import to_bytes
-# from urllib.request import getproxies, proxy_bypass, _parse_proxy
 from urllib.parse import unquote, urlunparse
 
 
-# Start your middleware class
+# 未继承HttpProxyMiddleware的下载中间件
 class ProxyMiddleware(object):
     # overwrite process request
-    def __init__(self, auth_encoding='utf-8', proxy_list = None):
-        print  (proxy_list)
-        self.proxies = defaultdict(list)
-        for proxy in proxy_list:
-            parse = urlparse(proxy)
-            self.proxies[parse.scheme].append(proxy)
+    # def __init__(self, auth_encoding='utf-8', proxy_list = None):
+    #     print  (proxy_list)
+    #     self.proxies = defaultdict(list)
+    #     for proxy in proxy_list:
+    #         parse = urlparse(proxy)
+    #         self.proxies[parse.scheme].append(proxy)
 
     def process_request(self, request, spider):
         print("in--------------------- proxy down")
@@ -44,16 +43,16 @@ class ProxyMiddleware(object):
         #encoded_user_pass = base64.encodestring(proxy_user_pass)
         #request.headers['Proxy-Authorization'] = 'Basic ' + encoded_user_pass
 
-    @classmethod
-    def from_crawler(cls, crawler):
-        if not crawler.settings.getbool('HTTPPROXY_ENABLED'):
-            raise NotConfigured
-        if not crawler.settings.get('HTTP_PROXY_LIST'):
-            raise NotConfigured
-        http_proxy_list = crawler.settings.get('HTTP_PROXY_LIST')  
-        auth_encoding = crawler.settings.get('HTTPPROXY_AUTH_ENCODING', 'utf-8')
+    # @classmethod
+    # def from_crawler(cls, crawler):
+    #     if not crawler.settings.getbool('HTTPPROXY_ENABLED'):
+    #         raise NotConfigured
+    #     if not crawler.settings.get('HTTP_PROXY_LIST'):
+    #         raise NotConfigured
+    #     http_proxy_list = crawler.settings.get('HTTP_PROXY_LIST')  
+    #     auth_encoding = crawler.settings.get('HTTPPROXY_AUTH_ENCODING', 'utf-8')
 
-        return cls(auth_encoding, http_proxy_list)
+    #     return cls(auth_encoding, http_proxy_list)
 
 
 class MytestSpiderMiddleware:
@@ -104,7 +103,7 @@ class MytestSpiderMiddleware:
         spider.logger.info('Spider opened: %s' % spider.name)
 
  
-
+# 随机选择proxy下载中间件
 class RandomHttpProxyMiddleware(HttpProxyMiddleware):
 
     def __init__(self, auth_encoding='utf-8', proxy_list = None):
@@ -146,7 +145,7 @@ class MytestDownloaderMiddleware:
     def process_request(self, request, spider):
         # Called for each request that goes through the downloader
         # middleware.
-        print ("in------------------------------- mydown")
+        print ("in------------------------------- my down")
         # Must either:
         # - return None: continue processing this request
         # - or return a Response object

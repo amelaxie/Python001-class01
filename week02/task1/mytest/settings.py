@@ -16,8 +16,8 @@ NEWSPIDER_MODULE = 'mytest.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'mytest (+http://www.yourdomain.com)'
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36"
-#USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0"
+#USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36"
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0"
 #USER_AGENT = "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko"
 
 # Obey robots.txt rules
@@ -59,9 +59,9 @@ DOWNLOAD_DELAY = 1
 #    'mytest.middlewares.MytestDownloaderMiddleware': 543,
 #}
 DOWNLOADER_MIDDLEWARES = {
-    'mytest.middlewares.RandomHttpProxyMiddleware': 1,
-    #  "mytest.middlewares.ProxyMiddleware" :2,
-    'mytest.middlewares.MytestDownloaderMiddleware': 3,
+    'mytest.middlewares.RandomHttpProxyMiddleware': 100,
+    "mytest.middlewares.ProxyMiddleware" :None,
+    'mytest.middlewares.MytestDownloaderMiddleware': 200,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 400,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None
 }

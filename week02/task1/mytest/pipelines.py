@@ -34,7 +34,7 @@ class MytestPipeline:
             f.write(output)
         return item
 
-
+# 存储到mysql的pipeline
 class MySQLPipeline(object):
     def __init__(self):  # 执行爬虫时
         try:
@@ -48,18 +48,23 @@ class MySQLPipeline(object):
             self.Movie = type('test_movie', (Base, MovieTemplate), {
                               '__tablename__': 't_movies'})
         except Exception as e:
+            print("初始化数据库时发生错误")
             print(e)
 
     def process_item(self, item, spider):  # 爬取过程中执行的函数
-        # 按照爬虫名动态创建一个类
-        # if not hasattr(self,spider.name):
-        #     self.Movie = type(spider.name, (Base, MovieTemplate), {'__tablename__': spider.name, })
-        # 在数据库中创建这个表
-        if spider.name not in self.engine.table_names(): #create table for this spider
-            self.Movie.metadata.create_all(self.engine)
+        try:
+            # 按照爬虫名动态创建一个类
+            # if not hasattr(self,spider.name):
+            #     self.Movie = type(spider.name, (Base, MovieTemplate), {'__tablename__': spider.name, })
+            # 在数据库中创建这个表
+            if spider.name not in self.engine.table_names(): #create table for this spider
+                self.Movie.metadata.create_all(self.engine)
 
-        self.dbsession.add(self.Movie(**item))
-        self.dbsession.commit()
+            self.dbsession.add(self.Movie(**item))
+            self.dbsession.commit()
+        except Exception as e:
+            print("存储数据时发生错误")
+            print(e)
 
     def close_spider(self, spider):  # 关闭爬虫时
         self.dbsession.close()
