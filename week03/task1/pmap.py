@@ -2,11 +2,12 @@
 import random
 import threading
 import time
+import json
 import sys
 import re
 import os
+import getopt
 import socket
-from requests.cookies import RequestsCookieJar
 from queue import Queue
 from netaddr import IPNetwork, IPRange
 
@@ -22,6 +23,7 @@ tcp_result = {}
 flag = False
 
 
+# 自定义输入错误
 class InputError(BaseException):
     def __init__(self, message):
         self.message = message
@@ -46,13 +48,12 @@ class PingThread(threading.Thread):
         重写run方法
         '''
         # print(f'启动ping线程：{self.thread_id}')
-        self.scheduler()
+        self.ping_check()
         # print(f'结束ping线程：{self.thread_id}')
 
-    # 模拟任务调度
-    def scheduler(self):
+    # ping 检测
+    def ping_check(self):
         while True:
-            time.sleep(random.randint(1, 5))
             if self.queue.empty():  # 队列为空不处理
                 break
             else:
@@ -71,9 +72,10 @@ class PingThread(threading.Thread):
                         portQueue.put((ipaddr, port))
 
 
+# socket 检测端口
 class TcpThread(threading.Thread):
     '''
-    页面内容分析
+    端口检测任务
     '''
 
     def __init__(self, thread_id, queue):
@@ -114,23 +116,71 @@ class TcpThread(threading.Thread):
         lock.release()
 
 
-def check_input(param_list):
-    if len(param_list) < 6:
-        raise InputError("缺少参数")
-    if param_list[1] != "-n":
-        raise InputError("并发参数错误")
+# Getopt参数类
+class Getopt_pmap:
+    def __init__(self, argv):
+        try:
+            # 参数注册
+            opts, args = getopt.getopt(argv, "hn:f:i:w:v", ["help", "ip="])
+            print(f"parsed argv: opts----{opts} args----{args}")
+        except getopt.GetoptError:
+            # 参数不符合注册格式要求报错
+            print("parameter format error")
+            raise InputError("-h，--help查看使用说明")
+
+        self.thread_number = None
+        self.scan_mode = None
+        self.display_spend = False
+        self.ipaddr_str = None
+        self.output_file = None
+        self.ipaddr_list = []
+
+        for opt, arg in opts:
+            # -h与--help等价
+            if opt in ("-h", "--help"):
+                raise InputError("-h，--help查看使用说明")
+            # -n 并发参数
+            elif opt in ("-n"):
+                self.thread_number = arg
+            # -f 检测模式
+            elif opt in ("-f"):
+                self.scan_mode = arg
+            # ip地址参数
+            elif opt in ("-i", "--ip"):
+                self.ipaddr_str = arg
+            # 时间显示参数
+            elif opt in ("-v"):
+                self.display_spend = True
+            # 输出json
+            elif opt in ("-w"):
+                self.output_file = arg
+        print(f"thread number is {self.thread_number}, scan mode is {self.scan_mode}"
+              f" ，ip address is {self.ipaddr_str}, display spend is {self.display_spend}, output is {self.output_file}!")
+
+
+# IP地址合法性检查
+def check_ip(ipAddr):
+    compile_ip = re.compile(
+        '^(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)$')
+    if compile_ip.match(ipAddr):
+        return True
+    else:
+        return False
+
+
+# 参数合理性检查
+def check_param(getopt_obj):
+    """
+    @type getopt_obj:Getopt_pmap
+    """
     try:
-        thread_num = int(param_list[2])
+        int(getopt_obj.thread_number)
     except:
         raise InputError("并发参数错误")
-    if param_list[3] != "-f":
-        raise InputError("检测参数错误")
-    mode = param_list[4]
-    if mode != "ping" and mode != "tcp":
+    if getopt_obj.scan_mode != "ping" and getopt_obj.scan_mode != "tcp":
         raise InputError("检测参数错误")
     ip_list = []
-    ip_str = param_list[6]
-    print(ip_str)
+    ip_str = getopt_obj.ipaddr_str
     if ip_str.find("-") != -1:
         startip = ip_str.split("-")[0]
         endip = ip_str.split("-")[1]
@@ -150,25 +200,22 @@ def check_input(param_list):
         if not check_ip(ip_str):
             raise InputError("ip地址参数错误")
         ip_list.append(ip_str)
-    return thread_num, mode, ip_list
-
-
-def check_ip(ipAddr):
-    compile_ip = re.compile(
-        '^(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)$')
-    if compile_ip.match(ipAddr):
-        return True
-    else:
-        return False
+    getopt_obj.ipaddr_list = ip_list
 
 
 if __name__ == '__main__':
+    # 参数检查
+    argv = sys.argv[1:]
+    param_obj = Getopt_pmap(argv)
+    check_param(param_obj)
+
+    # 参数读取
+    start_time = time.time()
+    ip_list = param_obj.ipaddr_list
+    thread_num = int(param_obj.thread_number)
+
+    # 将IP地址放入ping队列
     thread_list = []
-    try:
-        thread_num, mode, ip_list = check_input(sys.argv)
-    except InputError as e:
-        print(e)
-        sys.exit(1)
     print(f'共要检测{len(ip_list)}个ip地址')
     pingQueue = Queue()
     for ipaddr in ip_list:
@@ -184,27 +231,38 @@ if __name__ == '__main__':
 
     # tcp线程
     tcp_threads = []
-    for thread_id in range(thread_num):
-        thread = TcpThread(thread_id, portQueue)
-        thread.start()
-        tcp_threads.append(thread)
+    if param_obj.scan_mode == 'tcp':
+        for thread_id in range(thread_num):
+            thread = TcpThread(thread_id, portQueue)
+            thread.start()
+            tcp_threads.append(thread)
 
-    # 结束ping线程
+    # 结束ping线程，ping检查结束后在TCP队列最后加上结束标志
     for t in ping_threads:
         t.join()
     for i in range(thread_num):
         portQueue.put(None)
 
     # 结束tcp线程
-    for t in tcp_threads:
-        t.join()
+    if param_obj.scan_mode == 'tcp':
+        for t in tcp_threads:
+            t.join()
 
-    # 重新排序
+    # 列表重新排序
     ping_result['ping_pass'] = sorted(ping_result['ping_pass'])
     ping_result['ping_fail'] = sorted(ping_result['ping_fail'])
     for ipaddr, port_dict in tcp_result.items():
         port_dict["open_port"] = sorted(port_dict["open_port"])
 
     # 输出结果
-    print(ping_result)
-    print(tcp_result)
+    end_time = time.time()
+    print("---------------检测结果------------------")
+    if param_obj.display_spend:
+        print(f'检测共耗时：{round(end_time - start_time, 2)} 秒')
+    print(f"ping 通过的地址列表：{ping_result['ping_pass']}")
+    if param_obj.scan_mode == "tcp":
+        print(tcp_result)
+    if param_obj.output_file is not None:
+        with open(param_obj.output_file, 'w') as f:
+            json.dump(ping_result, f)
+            json.dump(tcp_result, f)
