@@ -1,0 +1,15 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>BookList</title>
+	</head>
+	<body>
+		{% for book in n %}
+			<div>
+				bookname: {{ book.name}} <br>
+				bookdesc: {{ book.desc}} <br>
+				bookurl: {{ book.url}} <br>	
+			</div>
+		{% endfor %}
+	</body>
+</html>
