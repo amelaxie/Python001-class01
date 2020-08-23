@@ -20,7 +20,7 @@
         <entry file="file://$PROJECT_DIR$/index/urls.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="209">
-              <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+              <caret line="11" selection-start-line="11" selection-end-line="11" />
               <folding>
                 <element signature="e#0#57#0" expanded="true" />
               </folding>
@@ -73,7 +73,7 @@
         <entry file="file://$PROJECT_DIR$/index/views.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-323">
-              <caret line="4" column="25" lean-forward="true" selection-start-line="4" selection-end-line="5" />
+              <caret line="4" column="25" selection-start-line="4" selection-end-line="5" />
             </state>
           </provider>
         </entry>
@@ -82,7 +82,7 @@
         <entry file="file://$PROJECT_DIR$/index/form.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="190">
-              <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+              <caret line="10" selection-start-line="10" selection-end-line="10" />
             </state>
           </provider>
         </entry>
@@ -177,6 +177,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/index/templates" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
@@ -238,12 +239,12 @@
       <workItem from="1598017006264" duration="3705000" />
       <workItem from="1598058798171" duration="7950000" />
       <workItem from="1598107987012" duration="2904000" />
-      <workItem from="1598180590753" duration="3879000" />
+      <workItem from="1598180590753" duration="4168000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="18438000" />
+    <option name="totallyTimeSpent" value="18727000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
@@ -476,14 +477,14 @@
     <entry file="file://$PROJECT_DIR$/index/form.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="190">
-          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-323">
-          <caret line="4" column="25" lean-forward="true" selection-start-line="4" selection-end-line="5" />
+          <caret line="4" column="25" selection-start-line="4" selection-end-line="5" />
         </state>
       </provider>
     </entry>
@@ -497,7 +498,7 @@
     <entry file="file://$PROJECT_DIR$/index/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="209">
-          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
           <folding>
             <element signature="e#0#57#0" expanded="true" />
           </folding>
