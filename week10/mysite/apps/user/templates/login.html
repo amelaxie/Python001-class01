@@ -1,0 +1,63 @@
+<head>
+    {% block head %}
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Allenh">
+        <title>{% block title %}{% endblock %}- 运维平台登录页</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'bootstrap/css/metisMenu.min.css' %}">
+        <link rel="stylesheet" href="{% static 'bootstrap/css/sb-admin-2.css' %}">
+        <link rel="stylesheet" href="{% static 'bootstrap/css/font-awesome.min.css' %}">
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+    <script src="{% static 'bootstrap/js/html5shiv.min.js'%}" ></script>
+    <script src="{% static 'bootstrap/js/respond.min.js' %}"></script>
+    <![endif]-->
+    {% endblock %}
+</head>
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <div class="login-panel panel panel-default">
+                    <div class="panel-heading">
+                        {# 登录出错提示 #}
+                        {% if msg %}
+                            <p class="errornote">
+                                <font color="#FF0000">{{ msg }}</font>
+                            </p>
+                        {% endif %}
+                        <h3 class="panel-title">访问运维平台，请登录</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form action="./" role="form" method="post">
+                            <fieldset>
+                                {# 添加csrf token#}
+                                {% csrf_token %}
+                                {# 添加表单 #}
+                                {{ form }}
+                                {# 判断是否包含跳转参数，有则跟表单一起发送 #}
+                                {% if url %}
+                                    <input name="next" type="hidden" value="{{ url }}">
+                                {% endif %}
+
+                                <div class="checkbox">
+{#                                    <label>#}
+{#                                        <input name="remember" type="checkbox" value="Remember Me">保持登录#}
+{#                                    </label>#}
+                                </div>
+                                <!-- Change this to a button or input when using this as a form -->
+                                <input type="submit" class="btn btn-lg btn-success btn-block" value="登录">
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

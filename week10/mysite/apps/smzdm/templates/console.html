@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layuiAdmin 控制台主页一</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md8">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md6">
+                    <div class="layui-card">
+                        <div class="layui-card-header">数据概览</div>
+                        <div class="layui-card-body">
+                            <div class="layui-carousel layadmin-carousel layadmin-backlog">
+                                <div carousel-item>
+                                    <ul class="layui-row layui-col-space8">
+                                        <li class="layui-col-xs6">
+                                            <a lay-href="/smzdm/show_goods/" class="layadmin-backlog-body">
+                                                <h3>商品总数</h3>
+                                                <p><cite>{{ goods_num }}</cite></p>
+                                            </a>
+                                        </li>
+                                        <li class="layui-col-xs6">
+                                            <a lay-href="/smzdm/show_comment/" class="layadmin-backlog-body">
+                                                <h3>评论总数</h3>
+                                                <p><cite>{{ comment_num }}</cite></p>
+                                            </a>
+                                        </li>
+                                        <li class="layui-col-xs6">
+                                            <a class="layadmin-backlog-body">
+                                                <h3>品牌数量</h3>
+                                                <p><cite>{{ type_num }}</cite></p>
+                                            </a>
+                                        </li>
+                                        <li class="layui-col-xs6">
+                                            <a class="layadmin-backlog-body">
+                                                <h3>平均价格</h3>
+                                                <p><cite>{{ avg_price }}</cite></p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-card">
+                        <div class="layui-card-header">商品数量排行</div>
+                        <div class="layui-card-body">
+                            <div carousel-item>
+                                <ul class="layui-row layui-col-space9">
+                                    <li class="layui-col-xs9">
+                                        <div style="width: 400px; height: 185px" id="BarChart"></div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md12">
+
+                    <div class="layui-card">
+                        <div class="layui-tab layui-tab-brief">
+                            <ul class="layui-tab-title">
+                                <li class="layui-this">今日商品</li>
+                                <li>今日评论</li>
+                            </ul>
+                            <div class="layui-tab-content">
+                                <div class="layui-tab-item layui-show">
+                                    <table id="goods"></table>
+                                </div>
+                                <div class="layui-tab-item">
+                                    <table id="comment"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-md4">
+            <div class="layui-card">
+                <div class="layui-card-header">热门排行</div>
+                <div class="layui-card-body layui-text">
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="100">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        {% for data in comment_ranking %}
+                            <tr>
+                                <td onclick="funcpop({{ data|get_item:"goods_id" }});" class="layui-btn-sm">
+                                    <a class="layui-table-link">{{ data|get_item:"goods_id" }}</a>
+                                </td>
+                                <td>{{ data|get_item:"name" }}</td>
+                                <td>{{ data|get_item:"comment_num" }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-card">
+                <div class="layui-card-header">好评率排行</div>
+                <div class="layui-card-body layui-text">
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="100">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        {% for data in worth_ranking %}
+                            <tr>
+                                <td onclick="funcpop({{ data|get_item:"goods_id" }});" class="layui-btn-sm">
+                                    <a class="layui-table-link">{{ data|get_item:"goods_id" }}</a>
+                                </td>
+                                <td>{{ data|get_item:"name" }}</td>
+                                <td>{{ data|get_item:"worth_rate" }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="layui-card">
+                <div class="layui-card-header">评价积极率排行</div>
+                <div class="layui-card-body layui-text">
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="100">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        {% for data in positive_ranking %}
+                            <tr>
+                                <td onclick="funcpop({{ data|get_item:"goods_id" }});">
+                                    <a class="layui-table-link">{{ data|get_item:"goods_id" }}</a>
+                                </td>
+                                <td>{{ data|get_item:"name" }}</td>
+                                <td>{{ data|get_item:"positive_rate" }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    {#今日商品表#}
+    layui.use('table', function () {
+        var table = layui.table;
+        table.render({
+            elem: '#goods'
+            , url: '/smzdm/api/get_goods/0'
+            , where: {
+                "keyword": "{{ keyword }}",
+                "brand": "{{ brand }}",
+                "start_time": "{{query_time}}",
+                "end_time": "{{end_time}}"
+            }
+            , page: true
+            , cols: [[
+                  {field: 'goods_id', width: 95, title: '商品ID', sort: true}
+                , {field: 'time', width: 175, title: '发布时间', sort: true}
+                , {field: 'brand', width: '10%', title: '品牌'}
+                , {field: 'name', width: 150, title: '名称', sort: true}
+                , {field: 'price', width: 80, title: '价格', sort: true}
+                , {field: 'visible_price', width: 95, title: '显示价格'}
+                , {field: 'worth', width: 75, title: '值', sort: true}
+                , {field: 'worthless', width: 75, title: '不值', sort: true}
+                , {field: 'comment_num', width: 90, title: '评论数', sort: true}
+                , {field: 'positive', width: 100, title: '积极评价数', sort: true}
+                , {field: 'neutral', width: 100, title: '中性评价数', sort: true}
+                , {field: 'negative', width: 100, title: '消极评价数', sort: true}
+            ]],
+        });
+    });
+</script>
+<script>
+    {#今日评论表#}
+    layui.use('table', function () {
+        let table = layui.table;
+        table.render({
+            elem: '#comment'
+            , url: '/smzdm/api/get_comment/0/'
+            , method: "get"
+            , where: {
+                "keyword": "{{ keyword }}",
+                "sentiment": "{{ sentiment }}",
+                "start_time": "{{query_time}}",
+                "end_time": "{{end_time}}"
+            }
+
+            , page: true
+            , cols: [[
+                  {field: 'comment_id', width: 108, title: '评论ID', sort: true}
+                , {field: 'time', width: 140, title: '评论时间', sort: true}
+                , {field: 'goods_id', width: 108, title: '商品ID', sort: true}
+                , {field: 'name', width: 100, title: '商品名称', sort: true}
+                , {field: 'brand', width: 100, title: '品牌', sort: true}
+                , {field: 'text', width: '20%', title: '评论信息', sort: true}
+                , {field: 'sentiment', width: 100, title: '情感倾向', sort: true}
+                , {field: 'positive_prob', width: 110, title: '积极概率', sort: true}
+                , {field: 'negative_prob', width: 110, title: '消极概率', sort: true}
+                , {field: 'confidence', width: 100, title: '置信率', sort: true}
+            ]]
+        });
+    });
+</script>
+
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'console', 'echarts', 'table'], function () {
+
+        // 基于准备好的dom，初始化echarts实例
+        let BarChart = echarts.init(document.getElementById('BarChart'));
+
+        let optionBar = {
+            title: {
+                text: ''    //标题
+            },
+            tooltip: {},
+            legend: {
+                data: ['商品量']
+            },
+            xAxis: {
+                data: [{% for name in name_list %}"{{ name }}", {% endfor %}],
+                axisLabel: {
+                    formatter: function (value) {
+                        return value.split("").join("\n")
+                    },
+                    interval: 0  //间隔显示里柱状x轴信息 0为不间隔
+                },
+                axisLine: {
+                    show: false
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show: false
+                }
+            },
+            yAxis: {
+                type: 'value',
+                axisLine: {
+                    show: false
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show: false
+                }
+            },
+            series: [{
+                name: '商品数',
+                type: 'bar',//柱状
+                data: [{% for value in data_list %}{{ value }}, {% endfor %}],
+                itemStyle: {
+                    normal: {//柱子颜色
+                        color: '#4ad2ff'
+                    }
+                },
+            }]
+        }, optionCircle = {
+            tooltip: {//提示框，可以在全局也可以在
+                trigger: 'item',  //提示框的样式
+                formatter: "{a} <br/>{b}: {c} ({d}%)",
+                color: '#8F8F8F', //提示框的背景色
+                textStyle: { //提示的字体样式
+                    color: "white",
+                }
+            },
+            legend: {  //图例
+                orient: 'vertical',  //图例的布局，vertical 竖直    horizontal为水平
+                x: 'left',//图例显示在左边
+                data: ['触屏版', '手厅', '客户端', 'www'],
+                textStyle: {    //图例文字的样式
+                    color: '#838688',  //文字颜色
+                    fontSize: 12    //文字大小
+                }
+            },
+            series: [
+                {
+                    name: '访问来源',
+                    type: 'pie', //环形图的type和饼图相同
+                    radius: ['50%', '70%'],//饼图的半径，第一个为内半径，第二个为外半径
+                    avoidLabelOverlap: false,
+                    color: ['#37A2DA', '#32C5E9', '#67E0E3', '#9FE6B8', '#FFDB5C', '#ff9f7f', '#fb7293', '#E062AE', '#E690D1', '#e7bcf3', '#9d96f5', '#8378EA', '#96BFFF'],
+                    label: {
+                        normal: {  //正常的样式
+                            show: true,
+                            position: 'right'
+                        },
+                        emphasis: { //选中时候的样式
+                            show: true,
+                            textStyle: {
+                                fontSize: '10',
+                                fontWeight: 'bold'
+                            }
+                        }
+                    },  //提示文字
+                    labelLine: {
+                        normal: {
+                            show: true
+                        }
+                    },
+                    data: [
+                        {value: 310, name: '触屏版'},
+                        {value: 234, name: 'www'},
+                        {value: 135, name: '手厅'},
+                        {value: 1548, name: '客户端'}
+                    ]
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        BarChart.setOption(optionBar);
+        CircleChart.setOption(optionCircle);
+
+        window.onresize = function () {//用于使echarts自适应高度和宽度
+            BarChart.resize();
+            CircleChart.resize();
+        };
+    });
+
+    //弹出详情页方法
+    function funcpop(id) {
+        let url = "/smzdm/detail/".concat(id);  //拼装请求地址
+        layer.open({
+            offset: 'auto',     //位移
+            type: 2,            //type2为弹出页面
+            title: "商品详情",
+            area: ['1024px', '640px'],
+            content: url
+        });
+    }
+</script>
+</body>
+</html>
+
