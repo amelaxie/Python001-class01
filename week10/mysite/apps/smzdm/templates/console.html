@@ -105,7 +105,7 @@
                                     <a class="layui-table-link">{{ data|get_item:"goods_id" }}</a>
                                 </td>
                                 <td>{{ data|get_item:"name" }}</td>
-                                <td>{{ data|get_item:"comment_num" }}</td>
+                                <td width="40">{{ data|get_item:"comment_num" }}条</td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -128,7 +128,7 @@
                                     <a class="layui-table-link">{{ data|get_item:"goods_id" }}</a>
                                 </td>
                                 <td>{{ data|get_item:"name" }}</td>
-                                <td>{{ data|get_item:"worth_rate" }}</td>
+                                <td>{{ data|get_item:"worth_rate" }}&#37;</td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -151,7 +151,7 @@
                                     <a class="layui-table-link">{{ data|get_item:"goods_id" }}</a>
                                 </td>
                                 <td>{{ data|get_item:"name" }}</td>
-                                <td>{{ data|get_item:"positive_rate" }}</td>
+                                <td>{{ data|get_item:"positive_rate" }}&#37;</td>
                             </tr>
                         {% endfor %}
                         </tbody>

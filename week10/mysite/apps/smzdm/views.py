@@ -35,14 +35,13 @@ def db_query(sql):
         print(e)
         return None
 
-
 #  获取排行信息函数
 def get_goods_ranking():
     sql = 'select goods_id, name, comment_num from t_goods_processed  ORDER BY comment_num  desc limit 5'
     comment_ranking = db_query(sql)
-    sql = 'select goods_id,name ,worth/(worth+worthless) as worth_rate from t_goods_processed where worth+worthless>10 ORDER BY worth_rate desc LIMIT 5'
+    sql = """select goods_id,name ,round((worth /(worth + worthless))*100,2) as worth_rate from t_goods_processed where worth+worthless>10 ORDER BY worth_rate desc LIMIT 5"""
     worth_ranking = db_query(sql)
-    sql = 'select goods_id,name ,positive/(positive+neutral+negative) as positive_rate from t_goods_processed where comment_num>10 ORDER BY positive_rate desc LIMIT 5'
+    sql = """select goods_id,name ,round((positive/(positive+neutral+negative))*100,2) as positive_rate from t_goods_processed where comment_num>10 ORDER BY positive_rate desc LIMIT 5"""
     positive_ranking = db_query(sql)
     return comment_ranking, worth_ranking, positive_ranking
 
