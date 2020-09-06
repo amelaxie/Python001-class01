@@ -76,9 +76,8 @@
             , defaultToolbar: ['filter', 'exports', 'print']
             , page: true
             , cols: [[
-                {type: 'checkbox'}
-                , {field: 'comment_id', width: 108, title: '评论ID', sort: true}
-                , {field: 'goods_id', width: 108, title: '商品ID', sort: true}
+                  {field: 'comment_id', width: 108, title: '评论ID', sort: true}
+                , {field: 'goods_id', width: 108, title: '商品ID', sort: true,  templet: '#goods_idTpl'}
                 , {field: 'name', width: 100, title: '商品名称', sort: true}
                 , {field: 'brand', width: 100, title: '品牌', sort: true}
                 , {field: 'time', width: 140, title: '评论时间', sort: true}
@@ -92,10 +91,11 @@
     });
 </script>
 
-<script type="text/html" id="case_idTpl">
-    <a onclick="funcpop({% verbatim %}{{d.id}}{% endverbatim %});"
-       class="layui-btn layui-btn-sm layui-btn-normal">{% verbatim %}{{d.id}}{% endverbatim %}<a>
+<script type="text/html" id="goods_idTpl">
+    <a onclick="funcpop({% verbatim %}{{d.goods_id}}{% endverbatim %});"
+       class="layui-table-link">{% verbatim %}{{d.goods_id}}{% endverbatim %}<a>
 </script>
+
 
 <script>
     layui.config({
@@ -127,12 +127,12 @@
 
     //弹出详情页方法
     function funcpop(id) {
-        let url = "/dialing/case/".concat(id);  //拼装请求地址
+        let url = "/smzdm/detail/".concat(id);  //拼装请求地址
         layer.open({
             offset: 'auto',     //位移
             type: 2,            //type2为弹出页面
-            title: "用例信息",
-            area: ['720px', '640px'],
+            title: "商品详情",
+            area: ['1024px', '640px'],
             content: url
         });
     }

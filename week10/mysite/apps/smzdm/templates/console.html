@@ -101,7 +101,7 @@
                         <tbody>
                         {% for data in comment_ranking %}
                             <tr>
-                                <td onclick="funcpop({{ data|get_item:"goods_id" }});" class="layui-btn-sm">
+                                <td onclick="funcpop({{ data|get_item:"goods_id" }});">
                                     <a class="layui-table-link">{{ data|get_item:"goods_id" }}</a>
                                 </td>
                                 <td>{{ data|get_item:"name" }}</td>
@@ -124,7 +124,7 @@
                         <tbody>
                         {% for data in worth_ranking %}
                             <tr>
-                                <td onclick="funcpop({{ data|get_item:"goods_id" }});" class="layui-btn-sm">
+                                <td onclick="funcpop({{ data|get_item:"goods_id" }});">
                                     <a class="layui-table-link">{{ data|get_item:"goods_id" }}</a>
                                 </td>
                                 <td>{{ data|get_item:"name" }}</td>
@@ -179,7 +179,7 @@
             }
             , page: true
             , cols: [[
-                  {field: 'goods_id', width: 95, title: '商品ID', sort: true}
+                  {field: 'goods_id', width: 95, title: '商品ID', sort: true, templet: '#goods_idTpl'}
                 , {field: 'time', width: 175, title: '发布时间', sort: true}
                 , {field: 'brand', width: '10%', title: '品牌'}
                 , {field: 'name', width: 150, title: '名称', sort: true}
@@ -214,7 +214,7 @@
             , cols: [[
                   {field: 'comment_id', width: 108, title: '评论ID', sort: true}
                 , {field: 'time', width: 140, title: '评论时间', sort: true}
-                , {field: 'goods_id', width: 108, title: '商品ID', sort: true}
+                , {field: 'goods_id', width: 108, title: '商品ID', sort: true, templet: '#goods_idTpl'}
                 , {field: 'name', width: 100, title: '商品名称', sort: true}
                 , {field: 'brand', width: 100, title: '品牌', sort: true}
                 , {field: 'text', width: '20%', title: '评论信息', sort: true}
@@ -226,7 +226,10 @@
         });
     });
 </script>
-
+<script type="text/html" id="goods_idTpl">
+    <a onclick="funcpop({% verbatim %}{{d.goods_id}}{% endverbatim %});"
+       class="layui-table-link">{% verbatim %}{{d.goods_id}}{% endverbatim %}<a>
+</script>
 <script>
     layui.config({
         base: '/static/layuiadmin/' //静态资源所在路径
@@ -285,57 +288,6 @@
                     }
                 },
             }]
-        }, optionCircle = {
-            tooltip: {//提示框，可以在全局也可以在
-                trigger: 'item',  //提示框的样式
-                formatter: "{a} <br/>{b}: {c} ({d}%)",
-                color: '#8F8F8F', //提示框的背景色
-                textStyle: { //提示的字体样式
-                    color: "white",
-                }
-            },
-            legend: {  //图例
-                orient: 'vertical',  //图例的布局，vertical 竖直    horizontal为水平
-                x: 'left',//图例显示在左边
-                data: ['触屏版', '手厅', '客户端', 'www'],
-                textStyle: {    //图例文字的样式
-                    color: '#838688',  //文字颜色
-                    fontSize: 12    //文字大小
-                }
-            },
-            series: [
-                {
-                    name: '访问来源',
-                    type: 'pie', //环形图的type和饼图相同
-                    radius: ['50%', '70%'],//饼图的半径，第一个为内半径，第二个为外半径
-                    avoidLabelOverlap: false,
-                    color: ['#37A2DA', '#32C5E9', '#67E0E3', '#9FE6B8', '#FFDB5C', '#ff9f7f', '#fb7293', '#E062AE', '#E690D1', '#e7bcf3', '#9d96f5', '#8378EA', '#96BFFF'],
-                    label: {
-                        normal: {  //正常的样式
-                            show: true,
-                            position: 'right'
-                        },
-                        emphasis: { //选中时候的样式
-                            show: true,
-                            textStyle: {
-                                fontSize: '10',
-                                fontWeight: 'bold'
-                            }
-                        }
-                    },  //提示文字
-                    labelLine: {
-                        normal: {
-                            show: true
-                        }
-                    },
-                    data: [
-                        {value: 310, name: '触屏版'},
-                        {value: 234, name: 'www'},
-                        {value: 135, name: '手厅'},
-                        {value: 1548, name: '客户端'}
-                    ]
-                }
-            ]
         };
         // 使用刚指定的配置项和数据显示图表。
         BarChart.setOption(optionBar);
